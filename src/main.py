@@ -65,10 +65,10 @@ def create_new_user():
     for i in range(len(users)):
         if(users[i]['email']==new_user.serialize()['email']):
             raise APIException("El usuario ya existe" , status_code=400)
-            #la lista es: [{"email":"aaa@bbb.com"},{},{}]
+            
     print(new_user)
     #print(new_user.serialize())
-    db.session.add(new_user)
+    db.session.add(new_user) 
     db.session.commit()
     
     return jsonify({"mensaje": "Usuario creado exitósamente"}), 201
@@ -82,6 +82,18 @@ def get_user_by_id(user_id):
         raise APIException("El usuario no existe", status_code=400)  
     #print(user.serialize())
     return jsonify(user.serialize()), 200
+
+@app.route('/user/<int:user_id>', methods=['DELETE'])
+def delete_user_by_id(user_id):
+    if user_id==0:
+        raise APIException("Id no puede ser igual a 0", status_code=400)  
+    user = User.query.get(user_id)
+    if user == None:
+        raise APIException("El usuario no existe", status_code=400)  
+    #print(user.serialize())
+    db.session.delete(user)
+    db.session.commit()
+    return jsonify("usuario eliminado exitósamente"), 200
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
