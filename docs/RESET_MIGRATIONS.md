@@ -11,4 +11,4 @@ Sometimes the migration folder can get messed up, its really hard to fix some of
 3. Create de database again `mysql -u root -e "CREATE DATABASE example";`
 4. Initiallize the migrations again: `pipenv run init`
 5. Create the migration files again: `pipenv run migrate`
-6. Apply the migration files into your database `pipenv run upgrade`
+6. Apply the migration files into your database `pipenv run upgrade` 
