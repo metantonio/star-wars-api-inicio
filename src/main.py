@@ -177,9 +177,9 @@ def create_new_person():
     characters = People.query.all()
     characters = list(map( lambda character: character.serialize(), characters))
 
-    for i in range(len(characters)):
-        if(characters[i]['name']==new_character.serialize()['name']):
-            raise APIException("El personaje ya existe" , status_code=400)
+    # for i in range(len(characters)):
+    #     if(characters[i]['name']==new_character.serialize()['name']):
+    #         raise APIException("El personaje ya existe" , status_code=400)
             
     print(new_character)
     #print(new_user.serialize())
@@ -313,6 +313,40 @@ def delete_favorite_vehicle_by_id(item_id):
     db.session.delete(item)
     db.session.commit()
     return jsonify("Vehículo eliminado exitosamente"), 200
+
+
+#Función get para actualizar personajes individualmente de la base de datos
+@app.route('/people/<int:people_id>', methods=['PUT'])
+def put_people_by_id(people_id):
+    if people_id==0:
+        raise APIException("Id no puede ser igual a 0", status_code=400)  
+    person = People.query.get(people_id)#buscar por ID es la manera mas eficiente de realizar busquedas en las bases de datos
+    if person == None:
+        raise APIException("El usuario no existe", status_code=400) 
+    body = request.get_json()
+    #validaciones
+    if body is None:
+        raise APIException("Body está vacío" , status_code=400)
+    #validamos si viene el campo name en el body o no (despues de hacer el request.get_json())
+    if not body['name'] is None:
+        person.name = body['name']
+    db.session.commit()     
+    return jsonify(person.serialize()), 200
+
+
+@app.route('/people/busqueda', methods=['POST'])
+def busqueda_people():
+    body = request.get_json()
+    #validaciones
+    if body is None:
+        raise APIException("Body está vacío" , status_code=400)
+    if not body['name'] is None:    
+        found = People.query.filter(People.name==body['name']).all() #va a encontrar todas las coincidencias        
+        found = list(map( lambda item: item.serialize(), found))
+        print(found)
+    if found == None:
+        raise APIException("El personaje no existe", status_code=400)  
+    return jsonify(found), 200
 
 
 # esta linea SIEMPRE DEBE QUEDAR AL FINAL   
