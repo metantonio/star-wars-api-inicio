@@ -11,7 +11,21 @@ from admin import setup_admin
 from models import db, User, People, Favorite_People, Planets, Favorite_Planets, Vehicles, Favorite_Vehicles
 #from models import Person
 
+#importar jwt-flask-extended
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity, get_jwt
+
+#importar Bcrypt para encriptar
+from flask_bcrypt import Bcrypt
+
 app = Flask(__name__)
+
+# Setup the Flask-JWT-Extended extension
+app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")  # Change this!
+jwt = JWTManager(app)
+
+# Setup de Bcrypt
+bcrypt = Bcrypt(app)
+
 app.url_map.strict_slashes = False
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_CONNECTION_STRING')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -58,7 +72,9 @@ def create_new_user():
     else:
         descripcion=body['description']
 
-    new_user = User(email=body['email'], password=body['password'], is_active=True, description=descripcion)
+    password = bcrypt.generate_password_hash(body['password'],10).decode("utf-8")
+
+    new_user = User(email=body['email'], password=password, is_active=True, description=descripcion)
     users = User.query.all()
     users = list(map( lambda user: user.serialize(), users))
 
@@ -348,6 +364,38 @@ def busqueda_people():
         raise APIException("El personaje no existe", status_code=400)  
     return jsonify(found), 200
 
+
+@app.route('/login', methods=['POST'])
+def login():
+    body = request.get_json()
+    email = body['email']
+    password = body['password']
+
+    user = User.query.filter_by(email=email).first()
+
+    if user is None:
+        raise APIException("usuario no existe", status_code=401)
+    
+    #validamos el password si el usuario existe y si coincide con el de la BD
+    if not bcrypt.check_password_hash(user.password, password):
+        raise APIException("usuario o password no coinciden", status_code=401)
+
+    access_token = create_access_token(identity= user.id)
+    return jsonify({"token": access_token})
+    
+@app.route('/helloprotected', methods=['get'])
+@jwt_required()
+def hello_protected():
+    claims = get_jwt()
+    user = User.query.get(get_jwt_identity())
+
+    response_body={
+        "message":"token válido",
+        "user_id": get_jwt_identity(),
+        "user_email": user.email
+    }
+
+    return jsonify(response_body), 200
 
 # esta linea SIEMPRE DEBE QUEDAR AL FINAL   
 # this only runs if `$ python src/main.py` is executed
