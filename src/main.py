@@ -279,7 +279,7 @@ def delete_vehicle_by_id(item_id):
 #Funciones para eliminar items de la lista de favoritos
 
 #Funcion delete para eliminar items de la lista de personajes favoritos
-@app.route('favorites/people/<int:item_id>', methods=['DELETE'])
+@app.route('/favorites/people/<int:item_id>', methods=['DELETE'])
 def delete_favorite_character_by_id(item_id):
     if item_id==0:
         raise APIException("Id no puede ser igual a 0", status_code=400)  
@@ -291,7 +291,7 @@ def delete_favorite_character_by_id(item_id):
     return jsonify("Personaje eliminado exitosamente"), 200
 
 #Funcion delete para eliminar items de la lista de planetas favoritos
-@app.route('favorites/planet/<int:item_id>', methods=['DELETE'])
+@app.route('/favorites/planet/<int:item_id>', methods=['DELETE'])
 def delete_favorite_planet_by_id(item_id):
     if item_id==0:
         raise APIException("Id no puede ser igual a 0", status_code=400)  
@@ -303,7 +303,7 @@ def delete_favorite_planet_by_id(item_id):
     return jsonify("Planeta eliminado exitosamente"), 200
 
 #Funcion delete para eliminar items de la lista de planetas favoritos
-@app.route('favorites/vehicle/<int:item_id>', methods=['DELETE'])
+@app.route('/favorites/vehicle/<int:item_id>', methods=['DELETE'])
 def delete_favorite_vehicle_by_id(item_id):
     if item_id==0:
         raise APIException("Id no puede ser igual a 0", status_code=400)  

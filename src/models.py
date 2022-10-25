@@ -32,12 +32,12 @@ class People(db.Model):
     name = db.Column(db.String(100), nullable=False)
     height = db.Column(db.Float)
     mass = db.Column(db.Float)
-    hair_color  = db.Column(String(250))
-    skin_color  = db.Column(String(250))
-    eye_color  = db.Column(String(250))
-    birth_year = db.Column(Integer)
-    gender = db.Column(String(250))
-    homeworld = db.Column(String(250))
+    hair_color  = db.Column(db.String(250))
+    skin_color  = db.Column(db.String(250))
+    eye_color  = db.Column(db.String(250))
+    birth_year = db.Column(db.Integer)
+    gender = db.Column(db.String(250))
+    homeworld = db.Column(db.String(250))
     people_favorite = db.relationship("Favorite_People", backref="people")
 
 #Characters serialize
@@ -104,7 +104,7 @@ class Planets (db.Model):
 class Favorite_Planets(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id')) #con el nombre de la tabla user y atributo id
-    planet_id = db.Column(db.Integer, db.ForeignKey('planet.id'))
+    planet_id = db.Column(db.Integer, db.ForeignKey('planets.id'))
 
     #serialize
     def serialize(self):
@@ -115,18 +115,18 @@ class Favorite_Planets(db.Model):
         }
 
 class Vehicles(db.Model):
-    id = db.Column(Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    model = db.Column(String(250))
-    vehicle_class = db.Column(String(250))
-    manufacturer = db.Column(String(250))
-    cost_in_credits = db.Column(Integer)
+    model = db.Column(db.String(250))
+    vehicle_class = db.Column(db.String(250))
+    manufacturer = db.Column(db.String(250))
+    cost_in_credits = db.Column(db.Integer)
     length = db.Column(db.Float)
-    crew = db.Column(Integer)
-    passengers = db.Column(Integer)
+    crew = db.Column(db.Integer)
+    passengers = db.Column(db.Integer)
     max_atmosphering_speed = db.Column(db.Float)
     cargo_capacity = db.Column(db.Float)
-    consumables = db.Column(String(250))
+    consumables = db.Column(db.String(250))
     vehicles_favorite = db.relationship("Favorite_Vehicles", backref="vehicles")
 
     #serialize
