@@ -59,7 +59,7 @@ def handle_hello():
 @app.route('/user', methods=['POST'])
 def create_new_user():
     body = request.get_json()
-    #print(body['username']) 
+    print(body['username']) 
     descripcion=""
     try:
         if body is None or "email" not in body:
